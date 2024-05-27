@@ -1,26 +1,29 @@
+# Define queue rules
 queue_rules:
   - name: default
     conditions:
-      - "#approved-reviews-by>=1"
+      - "#approved-reviews-by>=1"  # Ensure at least one approved review is present
 
+# Define pull request rules
 pull_request_rules:
-  - name: automerge to main with label automerge and branch protection passing
+  - name: Automerge to main with label 'automerge' and passing branch protection
     conditions:
-      - "#approved-reviews-by>=1"
-      - base=main
-      - label=merge me daddy
+      - "#approved-reviews-by>=1"      # Ensure at least one approved review is present
+      - base=main                      # Ensure the target branch is 'main'
+      - label=merge me daddy           # Ensure the PR has the 'merge me daddy' label
     actions:
       queue:
         name: default
-        method: squash
-        commit_message_template: |
+        method: squash                # Squash commits before merging
+        commit_message_template: |    # Template for the commit message
           {{ title }} (#{{ number }})
           {{ body }}
-  - name: backport patches to v0.0.2-alpha branch
+
+  - name: Backport patches to 'v0.0.2-alpha' branch
     conditions:
-      - base=main
-      - label=backport/v0.0.2-alpha
+      - base=main                      # Ensure the target branch is 'main'
+      - label=backport/v0.0.2-alpha    # Ensure the PR has the 'backport/v0.0.2-alpha' label
     actions:
       backport:
         branches:
-          - release/v0.0.2-alpha
+          - release/v0.0.2-alpha      # Target branch for backporting
